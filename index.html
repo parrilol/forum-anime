@@ -4,24 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum Semplice</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .auth-buttons {
+            margin-top: 10px;
+        }
+
+        .auth-buttons button {
+            margin: 0 5px;
+            padding: 10px 15px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .post-area {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .new-post {
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        textarea {
+            resize: none;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            height: 100px;
+        }
+
+        button#post-btn {
+            align-self: flex-end;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Forum Semplice</h1>
+    <header>
+        <h1>Forum Semplice</h1>
+        <div class="auth-buttons">
+            <button id="login-btn">Login</button>
+            <button id="register-btn">Registrati</button>
+        </div>
+    </header>
 
-    <div class="auth-buttons">
-        <button id="login-btn">Login</button>
-        <button id="register-btn">Registrati</button>
-    </div>
+    <main>
+        <section id="post-area" class="post-area">
+            <!-- I post verranno visualizzati qui -->
+        </section>
 
-    <div id="post-area" class="post-area">
-        <!-- I post verranno visualizzati qui -->
-    </div>
-
-    <div class="new-post">
-        <textarea id="new-post-content" placeholder="Scrivi un nuovo post..."></textarea>
-        <button id="post-btn">Pubblica</button>
-    </div>
+        <section class="new-post">
+            <textarea id="new-post-content" placeholder="Scrivi un nuovo post..."></textarea>
+            <button id="post-btn">Pubblica</button>
+        </section>
+    </main>
 
     <!-- Modal per il login -->
     <div class="modal" id="login-modal">
@@ -45,6 +149,68 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Mostra e nasconde i modali di login e registrazione
+        document.getElementById('login-btn').addEventListener('click', () => {
+            document.getElementById('login-modal').style.display = 'flex';
+        });
+
+        document.getElementById('register-btn').addEventListener('click', () => {
+            document.getElementById('register-modal').style.display = 'flex';
+        });
+
+        document.getElementById('close-login').addEventListener('click', () => {
+            document.getElementById('login-modal').style.display = 'none';
+        });
+
+        document.getElementById('close-register').addEventListener('click', () => {
+            document.getElementById('register-modal').style.display = 'none';
+        });
+
+        // Simulazione di registrazione e login usando localStorage
+        document.getElementById('register-submit').addEventListener('click', () => {
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            if (username && password) {
+                localStorage.setItem('user', JSON.stringify({ username, password }));
+                alert('Registrazione avvenuta con successo!');
+                document.getElementById('register-modal').style.display = 'none';
+            } else {
+                alert('Inserisci un nome utente e una password validi.');
+            }
+        });
+
+        document.getElementById('login-submit').addEventListener('click', () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (user && user.username === username && user.password === password) {
+                localStorage.setItem('isLoggedIn', true);
+                alert('Login avvenuto con successo!');
+                document.getElementById('login-modal').style.display = 'none';
+            } else {
+                alert('Credenziali non valide');
+            }
+        });
+
+        // Aggiunge un nuovo post (simulazione)
+        document.getElementById('post-btn').addEventListener('click', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const content = document.getElementById('new-post-content').value;
+
+            if (isLoggedIn && content) {
+                const postArea = document.getElementById('post-area');
+                const post = document.createElement('div');
+                post.classList.add('post');
+                post.textContent = content;
+                postArea.appendChild(post);
+                document.getElementById('new-post-content').value = '';
+            } else {
+                alert('Devi essere loggato per pubblicare un post!');
+            }
+        });
+    </script>
 </body>
 </html>
